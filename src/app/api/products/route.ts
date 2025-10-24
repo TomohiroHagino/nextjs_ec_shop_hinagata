@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
       body.imageUrl,
     );
 
-          const productRepository = new ProductRepositoryImpl(prisma);
+    const productRepository = new ProductRepositoryImpl(prisma);
     const productDomainService = new ProductDomainService(productRepository);
     const createProductService = new CreateProductService(productRepository, productDomainService);
 
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     const minPrice = searchParams.get('minPrice') ? parseFloat(searchParams.get('minPrice')!) : undefined;
     const maxPrice = searchParams.get('maxPrice') ? parseFloat(searchParams.get('maxPrice')!) : undefined;
 
-          const productRepository = new ProductRepositoryImpl(prisma);
+    const productRepository = new ProductRepositoryImpl(prisma);
     const listProductsService = new ListProductsService(productRepository);
 
     const query = new GetProductsQuery(
