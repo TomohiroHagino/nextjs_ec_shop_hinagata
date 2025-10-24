@@ -2,11 +2,12 @@
 
 ## 概要
 
-Next.js 15を使用したECショップアプリケーションです。ドメイン駆動設計（DDD）とBEM（Block Element Modifier）CSS設計手法を採用しています。
+Next.js 15を使用したECショップアプリケーションです。  
+ドメイン駆動設計（DDD）とBEM（Block Element Modifier）CSS設計手法を採用しています。
 
 ## 技術スタック
 
-- **フロントエンド**: Next.js 15, React 18, TypeScript
+- **フロントエンド/バックエンド**: Next.js 15（フルスタック）, TypeScript
 - **スタイリング**: CSS Modules + BEM
 - **データベース**: PostgreSQL + Prisma(sqlite)
 - **認証**: JWT
