@@ -4,7 +4,7 @@
   "description": "ECショップ - Next.js 15 + DDD + BEM",
   "private": true,
   "prisma": {
-    "seed": "node --loader tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts"
   },
   "scripts": {
     "dev": "next dev",

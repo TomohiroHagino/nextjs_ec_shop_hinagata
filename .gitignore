@@ -98,8 +98,8 @@ temp/
 *.sw?
 
 # Prisma - データベースファイルのみ除外
-prisma/*.db
-prisma/*.db-journal
+*.db
+*.db-journal
 
 # Testing
 test-results/
