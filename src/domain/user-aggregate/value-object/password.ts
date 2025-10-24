@@ -35,9 +35,9 @@ export class Password {
   }
 
   /**
-   * 平文パスワードからハッシュ化されたパスワードを作成
+   * 平文パスワードからハッシュ化されたパスワードを作成（非同期）
    */
-  static fromPlainText(plainPassword: string): Password {
+  static async fromPlainText(plainPassword: string): Promise<Password> {
     if (!plainPassword || typeof plainPassword !== 'string') {
       throw new ValidationException('Password must be a non-empty string');
     }
@@ -52,15 +52,15 @@ export class Password {
 
     // 実際の実装ではbcryptを使用
     const bcrypt = require('bcryptjs');
-    const hashedValue = bcrypt.hashSync(plainPassword, 12);
+    const hashedValue = await bcrypt.hash(plainPassword, 12);
     return new Password(hashedValue);
   }
 
   /**
-   * 平文パスワードと比較
+   * 平文パスワードと比較（非同期）
    */
-  compare(plainPassword: string): boolean {
+  async compare(plainPassword: string): Promise<boolean> {
     const bcrypt = require('bcryptjs');
-    return bcrypt.compareSync(plainPassword, this._hashedValue);
+    return await bcrypt.compare(plainPassword, this._hashedValue);
   }
 }

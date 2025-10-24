@@ -1,35 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/auth-context';
 import styles from './navigation.module.scss';
 
 export default function Navigation() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    
-    if (token && userData && userData !== 'undefined') {
-      try {
-        setIsLoggedIn(true);
-        setUser(JSON.parse(userData));
-      } catch (error) {
-        console.error('Failed to parse user data:', error);
-        // 不正なデータをクリア
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-      }
-    }
-  }, []);
+  const { isLoggedIn, user, logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setIsLoggedIn(false);
-    setUser(null);
+    logout();
     window.location.href = '/';
   };
 
@@ -56,8 +36,11 @@ export default function Navigation() {
           {isLoggedIn ? (
             <>
               <span className={styles.navigation__user}>
-                こんにちは、{user?.firstName}さん
+                {user?.firstName}さん
               </span>
+              <Link href="/profile" className={styles.navigation__link}>
+                プロフィール
+              </Link>
               <button 
                 onClick={handleLogout}
                 className={styles.navigation__link}

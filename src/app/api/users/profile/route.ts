@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GetUserQuery } from '@/application/shared/query';
-import { GetUserService } from '@/application/user-aggregate';
+import { GetUserService, UpdateUserProfileService } from '@/application/user-aggregate';
+import { UpdateUserProfileCommand } from '@/application/shared/command';
 import { UserRepositoryImpl } from '@/infrastructure/database/repositories';
 import { UserDomainService } from '@/domain/user-aggregate';
 import { prisma } from '@/infrastructure/database/prisma/client';
@@ -52,6 +53,46 @@ export async function GET(request: NextRequest) {
         error: error instanceof Error ? error.message : 'User not found' 
       },
       { status: 404 }
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const userId = verifyToken(request);
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const command = new UpdateUserProfileCommand(
+      userId,
+      body.firstName,
+      body.lastName
+    );
+
+    const userRepository = new UserRepositoryImpl(prisma);
+    const userDomainService = new UserDomainService(userRepository);
+    const updateUserProfileService = new UpdateUserProfileService(userRepository, userDomainService);
+
+    const userDto = await updateUserProfileService.execute(command);
+
+    return NextResponse.json(
+      { success: true, data: userDto },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Profile update error:', error);
+    
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Failed to update profile' 
+      },
+      { status: 400 }
     );
   }
 }

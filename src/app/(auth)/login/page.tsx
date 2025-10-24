@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useAuth } from '@/contexts/auth-context';
 import { Button, Input } from '@/presentation/components/ui';
 import styles from './page.module.scss';
 
 export default function LoginPage() {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -37,9 +39,8 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        // トークンをローカルストレージに保存
-        localStorage.setItem('token', data.data.token);
-        localStorage.setItem('user', JSON.stringify(data.data.user));
+        // Contextを使用してログイン
+        login(data.data.token, data.data.user);
         
         // ホームページにリダイレクト
         window.location.href = '/';
@@ -47,6 +48,7 @@ export default function LoginPage() {
         setError(data.error || 'ログインに失敗しました');
       }
     } catch (err) {
+      console.error('Login error:', err);
       setError('ネットワークエラーが発生しました');
     } finally {
       setLoading(false);

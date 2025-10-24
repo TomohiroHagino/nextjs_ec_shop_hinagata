@@ -38,7 +38,8 @@ export class UserDomainService {
       throw new ValidationException('Invalid email or password');
     }
 
-    if (!user.password.compare(plainPassword)) {
+    const isValid = await user.password.compare(plainPassword);
+    if (!isValid) {
       throw new ValidationException('Invalid email or password');
     }
 
