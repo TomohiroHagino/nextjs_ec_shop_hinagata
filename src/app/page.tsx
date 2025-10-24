@@ -1,8 +1,13 @@
+'use client';
+
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { Button, Input } from '@/presentation/components/ui';
 import styles from './page.module.scss';
 
 export default function HomePage() {
+  const router = useRouter();
+
   return (
     <div className={styles.home}>
       <div className={styles.home__container}>
@@ -25,10 +30,18 @@ export default function HomePage() {
                 最新トレンドの商品をチェックして、お気に入りを見つけましょう。
               </p>
               <div className={styles.home__heroActions}>
-                <Button size="large" variant="primary">
+                <Button 
+                  size="large" 
+                  variant="primary"
+                  onClick={() => router.push('/products')}
+                >
                   商品を見る
                 </Button>
-                <Button size="large" variant="outline">
+                <Button 
+                  size="large" 
+                  variant="outline"
+                  onClick={() => router.push('/register')}
+                >
                   会員登録
                 </Button>
               </div>
