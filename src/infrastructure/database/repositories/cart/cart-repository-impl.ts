@@ -7,6 +7,9 @@ import { CartRepository } from '@/domain/cart-aggregate/repository';
 
 export class CartRepositoryImpl implements CartRepository {
   constructor(private readonly prisma: PrismaClient) {}
+  
+  // Prismaから取得した商品情報を一時的に保存
+  private productDataCache: Map<string, any> = new Map();
 
   async findById(id: CartId): Promise<Cart | null> {
     const cart = await this.prisma.cart.findUnique({
@@ -99,16 +102,21 @@ export class CartRepositoryImpl implements CartRepository {
   }
 
   private toDomainCart(cart: any): Cart {
-    const cartItems = cart.cartItems.map((item: any) =>
-      CartItem.reconstruct(
+    const cartItems = cart.cartItems.map((item: any) => {
+      // 商品情報をキャッシュに保存
+      if (item.product) {
+        this.productDataCache.set(item.productId, item.product);
+      }
+      
+      return CartItem.reconstruct(
         new CartItemId(item.id),
         new CartId(item.cartId),
         new ProductId(item.productId),
         new Quantity(item.quantity),
         new CreatedAt(item.createdAt),
         new UpdatedAt(item.updatedAt),
-      )
-    );
+      );
+    });
 
     return Cart.reconstruct(
       new CartId(cart.id),
@@ -117,5 +125,10 @@ export class CartRepositoryImpl implements CartRepository {
       new CreatedAt(cart.createdAt),
       new UpdatedAt(cart.updatedAt),
     );
+  }
+  
+  // 商品情報を取得するメソッド
+  getProductData(productId: string): any {
+    return this.productDataCache.get(productId);
   }
 }

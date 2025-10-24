@@ -8,6 +8,9 @@ import { OrderRepository } from '@/domain/order-aggregate/repository';
 
 export class OrderRepositoryImpl implements OrderRepository {
   constructor(private readonly prisma: PrismaClient) {}
+  
+  // Prismaから取得した商品情報を一時的に保存
+  private productDataCache: Map<string, any> = new Map();
 
   async findById(id: OrderId): Promise<Order | null> {
     const order = await this.prisma.order.findUnique({
@@ -83,8 +86,13 @@ export class OrderRepositoryImpl implements OrderRepository {
   }
 
   private toDomainOrder(order: any): Order {
-    const orderItems = order.orderItems.map((item: any) =>
-      OrderItem.reconstruct(
+    const orderItems = order.orderItems.map((item: any) => {
+      // 商品情報をキャッシュに保存
+      if (item.product) {
+        this.productDataCache.set(item.productId, item.product);
+      }
+      
+      return OrderItem.reconstruct(
         item.id,
         new OrderId(item.orderId),
         new ProductId(item.productId),
@@ -92,8 +100,8 @@ export class OrderRepositoryImpl implements OrderRepository {
         new Price(item.price),
         new CreatedAt(item.createdAt),
         new UpdatedAt(item.updatedAt),
-      )
-    );
+      );
+    });
 
     return Order.reconstruct(
       new OrderId(order.id),
@@ -104,6 +112,11 @@ export class OrderRepositoryImpl implements OrderRepository {
       new CreatedAt(order.createdAt),
       new UpdatedAt(order.updatedAt),
     );
+  }
+  
+  // 商品情報を取得するメソッド
+  getProductData(productId: string): any {
+    return this.productDataCache.get(productId);
   }
 
   async countByUserId(userId: UserId): Promise<number> {

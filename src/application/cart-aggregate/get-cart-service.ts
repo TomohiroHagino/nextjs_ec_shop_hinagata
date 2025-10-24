@@ -1,6 +1,7 @@
 import { Cart, CartId } from '@/domain/cart-aggregate';
 import { UserId } from '@/domain/user-aggregate/value-object';
 import { CartRepository, CartDomainService } from '@/domain/cart-aggregate';
+import { CartRepositoryImpl } from '@/infrastructure/database/repositories/cart/cart-repository-impl';
 import { GetCartQuery } from '../shared/query';
 import { CartDto, CartItemDto } from '../shared/dto';
 
@@ -26,13 +27,26 @@ export class GetCartService {
   }
 
   private toCartDto(cart: Cart): CartDto {
-    const itemDtos = cart.items.map(item => new CartItemDto(
-      item.id.value,
-      item.productId.value,
-      item.quantity.value,
-      item.createdAt.toString(),
-      item.updatedAt.toString(),
-    ));
+    const cartRepoImpl = this.cartRepository as CartRepositoryImpl;
+    
+    const itemDtos = cart.items.map(item => {
+      // リポジトリから商品情報を取得
+      const productData = cartRepoImpl.getProductData(item.productId.value);
+      
+      return new CartItemDto(
+        item.id.value,
+        item.productId.value,
+        item.quantity.value,
+        productData ? {
+          id: productData.id,
+          name: productData.name,
+          price: productData.price,
+          imageUrl: productData.imageUrl,
+        } : undefined,
+        item.createdAt.toString(),
+        item.updatedAt.toString(),
+      );
+    });
 
     return new CartDto(
       cart.id.value,

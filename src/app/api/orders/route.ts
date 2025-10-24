@@ -3,6 +3,8 @@ import { CreateOrderCommand } from '@/application/shared/command';
 import { CreateOrderService, GetOrdersService } from '@/application/order-aggregate';
 import { GetOrdersQuery } from '@/application/shared/query';
 import { OrderRepositoryImpl } from '@/infrastructure/database/repositories';
+import { ProductRepositoryImpl } from '@/infrastructure/database/repositories/product/product-repository-impl';
+import { CartRepositoryImpl } from '@/infrastructure/database/repositories/cart/cart-repository-impl';
 import { OrderDomainService } from '@/domain/order-aggregate';
 import { prisma } from '@/infrastructure/database/prisma/client';
 import jwt from 'jsonwebtoken';
@@ -43,8 +45,15 @@ export async function POST(request: NextRequest) {
     );
 
     const orderRepository = new OrderRepositoryImpl(prisma);
+    const productRepository = new ProductRepositoryImpl(prisma);
+    const cartRepository = new CartRepositoryImpl(prisma);
     const orderDomainService = new OrderDomainService(orderRepository);
-    const createOrderService = new CreateOrderService(orderRepository, orderDomainService);
+    const createOrderService = new CreateOrderService(
+      orderRepository, 
+      orderDomainService, 
+      productRepository,
+      cartRepository
+    );
 
     const orderDto = await createOrderService.execute(command);
 

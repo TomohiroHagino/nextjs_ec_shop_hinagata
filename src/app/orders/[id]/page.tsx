@@ -50,13 +50,27 @@ export default function OrderDetailPage({ params }: any) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchOrder();
+    // Next.js 15: paramsがPromiseになったので解決する
+    const resolveParams = async () => {
+      const resolvedParams = await params;
+      setOrderId(resolvedParams.id);
+    };
+    resolveParams();
+  }, [params]);
+
+  useEffect(() => {
+    if (orderId) {
+      fetchOrder();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.id]);
+  }, [orderId]);
 
   const fetchOrder = async () => {
+    if (!orderId) return;
+    
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -64,7 +78,7 @@ export default function OrderDetailPage({ params }: any) {
         return;
       }
 
-      const response = await fetch(`/api/orders/${params.id}`, {
+      const response = await fetch(`/api/orders/${orderId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -88,13 +102,15 @@ export default function OrderDetailPage({ params }: any) {
       return;
     }
 
+    if (!orderId) return;
+
     try {
       const token = localStorage.getItem('token');
       if (!token) return;
 
       setCancelling(true);
 
-      const response = await fetch(`/api/orders/${params.id}`, {
+      const response = await fetch(`/api/orders/${orderId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

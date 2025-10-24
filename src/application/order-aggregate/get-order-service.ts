@@ -1,5 +1,6 @@
 import { Order, OrderId } from '@/domain/order-aggregate';
 import { OrderRepository, OrderDomainService } from '@/domain/order-aggregate';
+import { OrderRepositoryImpl } from '@/infrastructure/database/repositories/order/order-repository-impl';
 import { GetOrderQuery } from '../shared/query';
 import { OrderDto, OrderItemDto } from '../shared/dto';
 
@@ -25,15 +26,27 @@ export class GetOrderService {
   }
 
   private toOrderDto(order: Order): OrderDto {
-    const itemDtos = order.items.map(item => new OrderItemDto(
-      item.id,
-      item.productId.value,
-      item.quantity.value,
-      item.price.value,
-      item.getSubtotal().value,
-      item.createdAt.toString(),
-      item.updatedAt.toString(),
-    ));
+    const orderRepoImpl = this.orderRepository as OrderRepositoryImpl;
+    
+    const itemDtos = order.items.map(item => {
+      // リポジトリから商品情報を取得
+      const productData = orderRepoImpl.getProductData(item.productId.value);
+      
+      return new OrderItemDto(
+        item.id,
+        item.productId.value,
+        item.quantity.value,
+        item.price.value,
+        item.getSubtotal().value,
+        productData ? {
+          id: productData.id,
+          name: productData.name,
+          imageUrl: productData.imageUrl,
+        } : undefined,
+        item.createdAt.toString(),
+        item.updatedAt.toString(),
+      );
+    });
 
     return new OrderDto(
       order.id.value,

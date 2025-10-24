@@ -134,6 +134,47 @@ export default function CartPage() {
     return cart.items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
   };
 
+  const createOrder = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('ログインが必要です');
+        return;
+      }
+
+      if (!cart || cart.items.length === 0) {
+        setError('カートが空です');
+        return;
+      }
+
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          items: cart.items.map(item => ({
+            productId: item.productId,
+            quantity: item.quantity,
+          })),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('注文の作成に失敗しました');
+      }
+
+      const data = await response.json();
+      
+      // 注文完了ページにリダイレクト
+      window.location.href = `/orders/${data.data.id}`;
+    } catch (err) {
+      console.error('注文作成エラー:', err);
+      setError(err instanceof Error ? err.message : '注文の作成に失敗しました');
+    }
+  };
+
   if (loading) {
     return (
       <div className={styles.cart}>
@@ -273,9 +314,9 @@ export default function CartPage() {
                   <Button
                     variant="primary"
                     size="large"
-                    onClick={() => window.location.href = '/checkout'}
+                    onClick={createOrder}
                   >
-                    レジに進む
+                    注文を確定する
                   </Button>
                 </div>
               </div>

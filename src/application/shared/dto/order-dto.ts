@@ -41,8 +41,13 @@ export class OrderItemDto extends BaseDto {
     public readonly quantity: number,
     public readonly price: number,
     public readonly subtotal: number,
-    public readonly createdAt: string,
-    public readonly updatedAt: string,
+    public readonly product?: {
+      id: string;
+      name: string;
+      imageUrl?: string;
+    },
+    public readonly createdAt?: string,
+    public readonly updatedAt?: string,
   ) {
     super();
   }
@@ -54,6 +59,7 @@ export class OrderItemDto extends BaseDto {
       quantity: this.quantity,
       price: this.price,
       subtotal: this.subtotal,
+      product: this.product,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };

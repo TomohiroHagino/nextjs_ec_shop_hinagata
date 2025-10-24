@@ -35,8 +35,14 @@ export class CartItemDto extends BaseDto {
     public readonly id: string,
     public readonly productId: string,
     public readonly quantity: number,
-    public readonly createdAt: string,
-    public readonly updatedAt: string,
+    public readonly product?: {
+      id: string;
+      name: string;
+      price: number;
+      imageUrl?: string;
+    },
+    public readonly createdAt?: string,
+    public readonly updatedAt?: string,
   ) {
     super();
   }
@@ -46,6 +52,7 @@ export class CartItemDto extends BaseDto {
       id: this.id,
       productId: this.productId,
       quantity: this.quantity,
+      product: this.product,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
