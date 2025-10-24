@@ -21,12 +21,14 @@ export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
+  const [minPriceDisplay, setMinPriceDisplay] = useState('');
+  const [maxPriceDisplay, setMaxPriceDisplay] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     fetchProducts();
-  }, [currentPage, searchTerm, minPrice, maxPrice]);
+  }, [currentPage]);
 
   const fetchProducts = async () => {
     try {
@@ -75,7 +77,31 @@ export default function ProductsPage() {
     setSearchTerm('');
     setMinPrice('');
     setMaxPrice('');
+    setMinPriceDisplay('');
+    setMaxPriceDisplay('');
     setCurrentPage(1);
+  };
+
+  const formatPriceInput = (value: string): string => {
+    // 数字以外を削除
+    const numericValue = value.replace(/[^\d]/g, '');
+    if (!numericValue) return '';
+    // カンマ区切りでフォーマット
+    return parseInt(numericValue, 10).toLocaleString();
+  };
+
+  const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const numericValue = value.replace(/[^\d]/g, '');
+    setMinPrice(numericValue);
+    setMinPriceDisplay(formatPriceInput(value));
+  };
+
+  const handleMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const numericValue = value.replace(/[^\d]/g, '');
+    setMaxPrice(numericValue);
+    setMaxPriceDisplay(formatPriceInput(value));
   };
 
   const addToCart = async (productId: string) => {
@@ -159,18 +185,18 @@ export default function ProductsPage() {
           <div className={styles.products__priceFilters}>
             <div className={styles.products__priceInput}>
               <Input
-                type="number"
+                type="text"
                 placeholder="最低価格"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
+                value={minPriceDisplay}
+                onChange={handleMinPriceChange}
                 className={styles.products__priceField}
               />
               <span className={styles.products__priceSeparator}>〜</span>
               <Input
-                type="number"
+                type="text"
                 placeholder="最高価格"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
+                value={maxPriceDisplay}
+                onChange={handleMaxPriceChange}
                 className={styles.products__priceField}
               />
             </div>

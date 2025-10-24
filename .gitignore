@@ -97,8 +97,9 @@ temp/
 *.sln
 *.sw?
 
-# Prisma
-prisma/migrations/
+# Prisma - データベースファイルのみ除外
+prisma/*.db
+prisma/*.db-journal
 
 # Testing
 test-results/
