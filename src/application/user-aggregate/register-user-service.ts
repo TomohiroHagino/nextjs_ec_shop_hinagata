@@ -17,7 +17,7 @@ export class RegisterUserService {
     command.validate();
 
     const email = new Email(command.email);
-    const password = Password.fromPlainText(command.password);
+    const password = await Password.fromPlainText(command.password);
     const userId = new UserId(uuidv4());
 
     // ドメインサービスでビジネスルール検証

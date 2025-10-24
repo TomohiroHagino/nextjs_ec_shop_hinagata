@@ -46,14 +46,17 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted');
     setLoading(true);
     setError(null);
 
     if (!validateForm()) {
+      console.log('Validation failed');
       setLoading(false);
       return;
     }
 
+    console.log('Sending registration request');
     try {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
@@ -69,6 +72,7 @@ export default function RegisterPage() {
       });
 
       const data = await response.json();
+      console.log('Registration response:', { ok: response.ok, data });
 
       if (response.ok) {
         setSuccess(true);
@@ -80,6 +84,7 @@ export default function RegisterPage() {
         setError(data.error || '登録に失敗しました');
       }
     } catch (err) {
+      console.error('Registration error:', err);
       setError('ネットワークエラーが発生しました');
     } finally {
       setLoading(false);
