@@ -1,0 +1,114 @@
+/* BEM CSS Modules for Login Page */
+
+.login {
+  width: 100%;
+}
+
+.login__header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.login__title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.login__subtitle {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.login__form {
+  margin-bottom: 24px;
+}
+
+.login__error {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.login__field {
+  margin-bottom: 20px;
+}
+
+.login__label {
+  display: block;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.login__input {
+  width: 100%;
+}
+
+.login__submit {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.login__footer {
+  text-align: center;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.login__footerText {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.login__footerLink {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.login__footerLink:hover {
+  text-decoration: underline;
+}
+
+.login__demo {
+  margin-top: 32px;
+  padding: 20px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.login__demoTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.login__demoText {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.login__demoAccount {
+  background-color: white;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: #374151;
+}
+
+.login__demoAccount p {
+  margin: 4px 0;
+}

@@ -1,0 +1,134 @@
+/* BEM CSS Modules for Home Page */
+
+.home {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.home__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.home__header {
+  text-align: center;
+  padding: 80px 0 40px;
+  color: white;
+}
+
+.home__title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.home__subtitle {
+  font-size: 1.25rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.home__main {
+  background-color: white;
+  border-radius: 20px 20px 0 0;
+  padding: 60px 0;
+  margin-top: 40px;
+}
+
+.home__hero {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.home__heroContent {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.home__heroTitle {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 16px;
+}
+
+.home__heroDescription {
+  font-size: 1.125rem;
+  color: #6b7280;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+.home__heroActions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.home__features {
+  padding: 60px 0;
+}
+
+.home__featuresTitle {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 48px;
+}
+
+.home__featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.home__feature {
+  text-align: center;
+  padding: 32px;
+  border-radius: 12px;
+  background-color: #f9fafb;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.home__feature:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.home__featureTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.home__featureDescription {
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .home__title {
+    font-size: 2rem;
+  }
+  
+  .home__heroTitle {
+    font-size: 2rem;
+  }
+  
+  .home__heroActions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .home__featuresGrid {
+    grid-template-columns: 1fr;
+  }
+}
