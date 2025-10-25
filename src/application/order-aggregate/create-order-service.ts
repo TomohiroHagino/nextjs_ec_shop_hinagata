@@ -98,8 +98,9 @@ export class CreateOrderService {
         },
       });
 
-      // 注文アイテムを保存
+      // 注文アイテムを保存 & 在庫を減らす
       for (const item of orderItems) {
+        // 注文アイテムを保存
         await tx.orderItem.create({
           data: {
             id: item.id,
@@ -111,6 +112,26 @@ export class CreateOrderService {
             updatedAt: item.updatedAt.value,
           },
         });
+
+        // 在庫を減らす（楽観的ロック）
+        const updateResult = await tx.product.updateMany({
+          where: {
+            id: item.productId.value,
+            stock: {
+              gte: item.quantity.value, // 在庫が注文数量以上の場合のみ更新
+            },
+          },
+          data: {
+            stock: {
+              decrement: item.quantity.value, // 在庫を減算
+            },
+          },
+        });
+
+        // 在庫が不足している場合はエラー
+        if (updateResult.count === 0) {
+          throw new Error(`在庫不足: 商品ID ${item.productId.value} の在庫が不足しています`);
+        }
       }
 
       // 注文作成後、カートをクリア

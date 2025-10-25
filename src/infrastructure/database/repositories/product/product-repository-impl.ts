@@ -51,7 +51,12 @@ export class ProductRepositoryImpl implements ProductRepository {
 
   async findActive(): Promise<Product[]> {
     const productsData = await this.prisma.product.findMany({
-      where: { isActive: true },
+      where: { 
+        isActive: true,
+        stock: {
+          gt: 0, // 在庫が1以上の商品のみ
+        },
+      },
       orderBy: { createdAt: 'desc' },
     });
 
@@ -106,6 +111,10 @@ export class ProductRepositoryImpl implements ProductRepository {
         name: {
           contains: name,
         },
+        isActive: true, // アクティブな商品のみ
+        stock: {
+          gt: 0, // 在庫が1以上の商品のみ
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -129,6 +138,10 @@ export class ProductRepositoryImpl implements ProductRepository {
         price: {
           gte: minPrice,
           lte: maxPrice,
+        },
+        isActive: true, // アクティブな商品のみ
+        stock: {
+          gt: 0, // 在庫が1以上の商品のみ
         },
       },
       orderBy: { createdAt: 'desc' },
