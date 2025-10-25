@@ -17,16 +17,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // APIモードかどうかを判定
-  const isApiOnly = process.env.API_ONLY === 'true';
-
   return (
     <html lang="ja">
-      <body className={`${inter.className} ${isApiOnly ? 'api-mode' : ''}`}>
+      <body className={inter.className}>
         <AuthProvider>
           <div id="root">
-            {/* APIモードの場合はナビゲーションを非表示 */}
-            {!isApiOnly && <Navigation />}
+            <Navigation />
             {children}
           </div>
         </AuthProvider>
