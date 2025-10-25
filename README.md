@@ -321,6 +321,103 @@ npm start
 Ctrl + C
 ```
 
+### APIモードでの起動
+
+このプロジェクトは、**フルスタックモード**（デフォルト）と**APIモード**の2つのモードで動作できます。
+
+#### フルスタックモード（デフォルト）
+
+フロントエンド（ページ）とバックエンド（API）の両方を提供します。
+
+```bash
+npm run dev        # 開発モード
+npm run build      # ビルド
+npm start          # 本番モード
+```
+
+**アクセス可能:**
+- フロントエンド: `http://localhost:3000/`
+- API: `http://localhost:3000/api/*`
+
+#### APIモード
+
+バックエンド（API）のみを提供します。フロントエンドは別のサーバー（React、Vue、別のNext.jsインスタンスなど）で提供することを想定しています。
+
+```bash
+npm run dev:api        # 開発モード（APIのみ）
+npm run dev:api:clean  # クリーンアップ後に起動
+npm run build:api      # ビルド（APIのみ）
+npm start:api          # 本番モード（APIのみ）
+```
+
+**アクセス可能:**
+- API: `http://localhost:3000/api/*`
+- API一覧: `http://localhost:3000/api`
+
+**アクセス不可:**
+- フロントエンド: `http://localhost:3000/` → `403 Forbidden`
+
+#### APIモードの使用例
+
+**1. API一覧を確認:**
+```bash
+curl http://localhost:3000/api
+```
+
+**レスポンス例:**
+```json
+{
+  "message": "ECショップ API",
+  "version": "1.0.0",
+  "mode": "API Only",
+  "endpoints": {
+    "auth": {
+      "login": "POST /api/auth/login",
+      "register": "POST /api/auth/register"
+    },
+    "products": {
+      "list": "GET /api/products",
+      "detail": "GET /api/products/[id]"
+    },
+    "cart": {
+      "get": "GET /api/cart",
+      "add": "POST /api/cart"
+    },
+    "orders": {
+      "list": "GET /api/orders",
+      "detail": "GET /api/orders/[id]",
+      "create": "POST /api/orders"
+    }
+  }
+}
+```
+
+**2. ログイン:**
+```bash
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "demo@example.com", "password": "password123"}'
+```
+
+**3. 商品一覧を取得:**
+```bash
+curl http://localhost:3000/api/products
+```
+
+**4. フロントエンドページにアクセス:**
+```bash
+curl http://localhost:3000/
+# → 403 Forbidden (APIモードのため)
+```
+
+#### APIモードのユースケース
+
+- **マイクロサービス構成**: フロントエンドとバックエンドを分離してデプロイ
+- **モバイルアプリ開発**: React Native、Flutter などのモバイルアプリからAPIを利用
+- **複数フロントエンド**: React、Vue、Angularなど複数のフロントエンドから同じAPIを利用
+- **API Gateway**: Next.jsをAPI Gatewayとして使用し、他のマイクロサービスへプロキシ
+- **開発環境の分離**: フロントエンド開発者とバックエンド開発者で開発環境を分離
+
 ### トラブルシューティング
 
 #### データベースがロックされている場合
@@ -362,10 +459,14 @@ PORT=3001 npm run dev
 ## 利用可能なスクリプト
 
 ### 開発・ビルド
-- `npm run dev` - 開発サーバーを起動
+- `npm run dev` - 開発サーバーを起動（フルスタックモード）
 - `npm run dev:clean` - データベースをクリーンアップしてから開発サーバーを起動
-- `npm run build` - プロダクションビルド
-- `npm run start` - プロダクションサーバーを起動
+- `npm run dev:api` - 開発サーバーを起動（APIモード）
+- `npm run dev:api:clean` - クリーンアップしてからAPIモードで起動
+- `npm run build` - プロダクションビルド（フルスタックモード）
+- `npm run build:api` - プロダクションビルド（APIモード）
+- `npm run start` - プロダクションサーバーを起動（フルスタックモード）
+- `npm run start:api` - プロダクションサーバーを起動（APIモード）
 - `npm run lint` - ESLintでコードをチェック
 
 ### テスト

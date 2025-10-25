@@ -9,8 +9,12 @@
   "scripts": {
     "dev": "next dev",
     "dev:clean": "npm run db:cleanup && next dev",
+    "dev:api": "API_ONLY=true next dev",
+    "dev:api:clean": "npm run db:cleanup && API_ONLY=true next dev",
     "build": "next build",
+    "build:api": "API_ONLY=true next build",
     "start": "next start",
+    "start:api": "API_ONLY=true next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",

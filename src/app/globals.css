@@ -23,7 +23,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: #1f2937;
   background-color: #ffffff;
-  padding-top: 68px; /* ヘッダーの高さ分のスペースを確保 */
+}
+
+/* フルスタックモード用: ヘッダーの高さ分のスペースを確保 */
+body:not(.api-mode) {
+  padding-top: 68px;
 }
 
 #root {

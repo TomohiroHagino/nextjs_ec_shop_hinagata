@@ -1,5 +1,244 @@
 /* BEM CSS Modules for Home Page */
 
+/* =====================================
+   APIモード用スタイル
+   ===================================== */
+.apiMode {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  padding: 40px 20px;
+}
+
+.apiMode__container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.apiMode__header {
+  text-align: center;
+  margin-bottom: 60px;
+  color: white;
+}
+
+.apiMode__badge {
+  display: inline-block;
+  background-color: #10b981;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.apiMode__title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.apiMode__version {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-bottom: 16px;
+  font-family: 'Courier New', monospace;
+}
+
+.apiMode__description {
+  font-size: 1.125rem;
+  opacity: 0.95;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.apiMode__main {
+  background-color: white;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.apiMode__section {
+  margin-bottom: 48px;
+}
+
+.apiMode__section:last-child {
+  margin-bottom: 0;
+}
+
+.apiMode__sectionTitle {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.apiMode__code {
+  background-color: #1f2937;
+  color: #10b981;
+  padding: 24px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.apiMode__code pre {
+  margin: 0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.apiMode__endpoints {
+  display: grid;
+  gap: 32px;
+}
+
+.apiMode__endpointGroup {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 24px;
+  background-color: #f9fafb;
+}
+
+.apiMode__groupTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.apiMode__endpoint {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.apiMode__endpoint:last-child {
+  border-bottom: none;
+}
+
+.apiMode__method {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  min-width: 60px;
+  text-align: center;
+}
+
+.apiMode__method[data-method="GET"] {
+  background-color: #10b981;
+  color: white;
+}
+
+.apiMode__method[data-method="POST"] {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.apiMode__method[data-method="PUT"] {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.apiMode__method[data-method="DELETE"] {
+  background-color: #ef4444;
+  color: white;
+}
+
+.apiMode__endpoint code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  color: #1f2937;
+  font-weight: 500;
+  flex: 1;
+}
+
+.apiMode__desc {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.apiMode__testAccount {
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.apiMode__accountInfo {
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+.apiMode__accountInfo:last-child {
+  margin-bottom: 0;
+}
+
+.apiMode__accountInfo strong {
+  color: #1f2937;
+  margin-right: 8px;
+}
+
+.apiMode__accountInfo code {
+  background-color: #1f2937;
+  color: #10b981;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+}
+
+.apiMode__links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.apiMode__links li {
+  margin-bottom: 12px;
+}
+
+.apiMode__links li:last-child {
+  margin-bottom: 0;
+}
+
+.apiMode__links a {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+}
+
+.apiMode__links a:hover {
+  color: #1e40af;
+  text-decoration: underline;
+}
+
+.apiMode__footer {
+  text-align: center;
+  margin-top: 60px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+}
+
+/* =====================================
+   フルスタックモード用スタイル
+   ===================================== */
 .home {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -69,6 +308,129 @@
   flex-wrap: wrap;
 }
 
+/* 商品一覧セクション */
+.home__products {
+  padding: 60px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.home__productsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.home__productsTitle {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.home__productsLink {
+  color: #667eea;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+.home__productsLink:hover {
+  color: #764ba2;
+}
+
+.home__productsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.home__productCard {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.home__productCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.home__productLink {
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.home__productImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.home__productImagePlaceholder {
+  width: 100%;
+  height: 200px;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.home__productContent {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.home__productName {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.home__productDescription {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  flex: 1;
+}
+
+.home__productFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.home__productPrice {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.home__productStock {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.home__productActions {
+  padding: 0 16px 16px;
+}
+
+/* サービス特徴セクション */
 .home__features {
   padding: 60px 0;
 }
@@ -126,6 +488,16 @@
   .home__heroActions {
     flex-direction: column;
     align-items: center;
+  }
+  
+  .home__productsHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .home__productsGrid {
+    grid-template-columns: 1fr;
   }
   
   .home__featuresGrid {

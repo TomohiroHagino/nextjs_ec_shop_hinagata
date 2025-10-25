@@ -16,9 +16,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const userRepository = new UserRepositoryImpl(prisma);
-    const userDomainService = new UserDomainService(userRepository);
-    const authenticateUserService = new AuthenticateUserService(userRepository, userDomainService);
+    const userRepositoryImpl = new UserRepositoryImpl(prisma);
+    const userDomainService = new UserDomainService(userRepositoryImpl);
+    const authenticateUserService = new AuthenticateUserService(userRepositoryImpl, userDomainService);
 
     const userDto = await authenticateUserService.execute(body.email, body.password);
 
