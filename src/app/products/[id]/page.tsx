@@ -1,8 +1,25 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
+/**
+ * 商品詳細ページ（サーバーコンポーネント）
+ * 
+ * サーバーコンポーネントである理由:
+ * - 商品情報の取得はサーバーサイドで実行（高速、SEO対応）
+ * - 初回表示が高速（クライアント側のJavaScriptなし）
+ * - 検索エンジンに商品情報を正しく伝達
+ * 
+ * パフォーマンス最適化:
+ * - データフェッチがサーバー側で完了してからHTMLを送信
+ * - クライアント側のローディング状態不要
+ * - Hydration前に完全な内容を表示
+ * 
+ * SEO対策:
+ * - metadataで商品名と説明を設定
+ * - 商品情報が静的HTMLに含まれる
+ * - OGPタグで SNS シェア対応
+ */
+import React from 'react';
 import Link from 'next/link';
-import { Button, Input } from '@/presentation/components/ui';
+import { notFound } from 'next/navigation';
+import { AddToCartForm } from '@/presentation/components/features/add-to-cart-form';
 import styles from './page.module.scss';
 
 interface Product {
@@ -15,105 +32,91 @@ interface Product {
   isActive: boolean;
 }
 
-export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [quantity, setQuantity] = useState(1);
-  const [addingToCart, setAddingToCart] = useState(false);
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
 
-  useEffect(() => {
-    const resolveParams = async () => {
-      const resolvedParams = await params;
-      fetchProduct(resolvedParams.id);
+/**
+ * 商品情報を取得（サーバーサイド）
+ * 
+ * Next.js 15では、APIルートを直接呼び出すのではなく、
+ * サービス層を直接使用することも可能ですが、
+ * 現状のアーキテクチャに合わせてAPI経由で取得します。
+ */
+async function getProduct(productId: string): Promise<Product | null> {
+  try {
+    // サーバー側なので絶対URLが必要
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/products/${productId}`, {
+      // ISR（Incremental Static Regeneration）で60秒キャッシュ
+      next: { revalidate: 60 },
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('商品取得エラー:', error);
+    return null;
+  }
+}
+
+/**
+ * メタデータ生成（SEO対策）
+ * 
+ * 動的にページタイトルと説明を設定
+ */
+export async function generateMetadata({ params }: PageProps) {
+  const resolvedParams = await params;
+  const product = await getProduct(resolvedParams.id);
+
+  if (!product) {
+    return {
+      title: '商品が見つかりません',
     };
-    resolveParams();
-  }, [params]);
-
-  const fetchProduct = async (productId: string) => {
-    try {
-      const response = await fetch(`/api/products/${productId}`);
-
-      if (!response.ok) {
-        throw new Error('商品の取得に失敗しました');
-      }
-
-      const data = await response.json();
-      setProduct(data.data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'エラーが発生しました');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const addToCart = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert('ログインが必要です');
-        return;
-      }
-
-      setAddingToCart(true);
-
-      const response = await fetch('/api/cart', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          productId: product?.id,
-          quantity,
-        }),
-      });
-
-      if (response.ok) {
-        alert('カートに追加しました');
-      } else {
-        const errorData = await response.json();
-        alert(errorData.error || 'カートへの追加に失敗しました');
-      }
-    } catch (err) {
-      console.error('カート追加エラー:', err);
-      alert('エラーが発生しました');
-    } finally {
-      setAddingToCart(false);
-    }
-  };
-
-  const handleQuantityChange = (value: number) => {
-    if (product && value >= 1 && value <= product.stock) {
-      setQuantity(value);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className={styles.product}>
-        <div className={styles.product__container}>
-          <div className={styles.product__loading}>読み込み中...</div>
-        </div>
-      </div>
-    );
   }
 
-  if (error || !product) {
-    return (
-      <div className={styles.product}>
-        <div className={styles.product__container}>
-          <div className={styles.product__error}>
-            {error || '商品が見つかりません'}
-          </div>
-        </div>
-      </div>
-    );
+  return {
+    title: `${product.name} - ECショップ`,
+    description: product.description,
+    openGraph: {
+      title: product.name,
+      description: product.description,
+      images: product.imageUrl ? [product.imageUrl] : [],
+    },
+  };
+}
+
+/**
+ * 商品詳細ページコンポーネント
+ * 
+ * サーバーコンポーネント:
+ * - 商品情報の取得とレンダリング
+ * - 静的な商品詳細の表示
+ * 
+ * クライアントコンポーネント（AddToCartForm）:
+ * - カートへの追加機能
+ * - 数量選択のインタラクション
+ */
+export default async function ProductDetailPage({ params }: PageProps) {
+  // paramsを解決
+  const resolvedParams = await params;
+  
+  // サーバーサイドで商品情報を取得
+  const product = await getProduct(resolvedParams.id);
+
+  // 商品が見つからない場合は404ページを表示
+  if (!product) {
+    notFound();
   }
 
   return (
     <div className={styles.product}>
       <div className={styles.product__container}>
+        {/* パンくずリスト */}
         <div className={styles.product__breadcrumb}>
           <Link href="/products" className={styles.product__breadcrumbLink}>
             商品一覧
@@ -124,7 +127,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </span>
         </div>
 
+        {/* メイン商品情報 */}
         <div className={styles.product__main}>
+          {/* 商品画像 */}
           <div className={styles.product__imageSection}>
             {product.imageUrl ? (
               <img 
@@ -139,6 +144,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             )}
           </div>
 
+          {/* 商品詳細情報 */}
           <div className={styles.product__infoSection}>
             <header className={styles.product__header}>
               <h1 className={styles.product__title}>{product.name}</h1>
@@ -161,60 +167,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </span>
             </div>
 
+            {/* カート追加フォーム（クライアントコンポーネント） */}
             {product.isActive && product.stock > 0 && (
               <div className={styles.product__purchase}>
-                <div className={styles.product__quantity}>
-                  <label className={styles.product__quantityLabel}>数量:</label>
-                  <div className={styles.product__quantityControls}>
-                    <Button
-                      variant="outline"
-                      size="small"
-                      onClick={() => handleQuantityChange(quantity - 1)}
-                      disabled={quantity <= 1}
-                    >
-                      -
-                    </Button>
-                    <Input
-                      type="number"
-                      name="quantity"
-                      value={quantity}
-                      onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
-                      min="1"
-                      max={product.stock}
-                      className={styles.product__quantityInput}
-                    />
-                    <Button
-                      variant="outline"
-                      size="small"
-                      onClick={() => handleQuantityChange(quantity + 1)}
-                      disabled={quantity >= product.stock}
-                    >
-                      +
-                    </Button>
-                  </div>
-                </div>
-
-                <div className={styles.product__actions}>
-                  <Button
-                    variant="primary"
-                    size="large"
-                    onClick={addToCart}
-                    loading={addingToCart}
-                    disabled={quantity > product.stock}
-                  >
-                    カートに追加
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="large"
-                    onClick={() => window.location.href = '/cart'}
-                  >
-                    カートを見る
-                  </Button>
-                </div>
+                <AddToCartForm
+                  productId={product.id}
+                  productName={product.name}
+                  maxStock={product.stock}
+                />
               </div>
             )}
 
+            {/* 販売停止中メッセージ */}
             {!product.isActive && (
               <div className={styles.product__unavailable}>
                 <p className={styles.product__unavailableText}>
@@ -223,6 +187,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </div>
             )}
 
+            {/* 在庫切れメッセージ */}
             {product.stock === 0 && (
               <div className={styles.product__outOfStock}>
                 <p className={styles.product__outOfStockText}>
@@ -233,6 +198,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
 
+        {/* 商品詳細テーブル */}
         <div className={styles.product__details}>
           <div className={styles.product__detailsSection}>
             <h2 className={styles.product__detailsTitle}>商品詳細</h2>

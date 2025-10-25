@@ -1,0 +1,42 @@
+.form {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 32px;
+}
+
+.form__quantity {
+  margin-bottom: 24px;
+}
+
+.form__quantityLabel {
+  display: block;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.form__quantityControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.form__quantityInput {
+  width: 80px;
+  text-align: center;
+}
+
+.form__actions {
+  display: flex;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .form__actions {
+    flex-direction: column;
+  }
+
+  .form__quantityControls {
+    justify-content: center;
+  }
+}
+

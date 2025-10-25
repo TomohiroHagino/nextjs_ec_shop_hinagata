@@ -1,0 +1,74 @@
+.filter {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.filter__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter__label {
+  font-weight: 500;
+  color: #1f2937;
+  font-size: 0.875rem;
+  margin-bottom: 4px;
+}
+
+.filter__priceRange {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter__priceInputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter__priceSeparator {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.filter__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  
+  button {
+    flex: 1;
+  }
+}
+
+@media (min-width: 768px) {
+  .filter {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 16px;
+  }
+
+  .filter__field {
+    flex: 1;
+  }
+
+  .filter__priceRange {
+    flex: 1;
+  }
+
+  .filter__actions {
+    flex: 0 0 auto;
+    min-width: 240px;
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .filter__actions {
+    flex-direction: row;
+  }
+}
+

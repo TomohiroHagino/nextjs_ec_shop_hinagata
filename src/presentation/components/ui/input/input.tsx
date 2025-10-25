@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import styles from './input.module.scss';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -17,7 +17,9 @@ export const Input: React.FC<InputProps> = ({
   id,
   ...props
 }) => {
-  const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+  // useIdを使用してサーバー・クライアント間で一貫したIDを生成
+  const generatedId = useId();
+  const inputId = id || generatedId;
 
   const inputClasses = [
     styles.input,

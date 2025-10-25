@@ -121,6 +121,8 @@
   overflow: hidden;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   background-color: white;
+  display: flex;
+  flex-direction: column;
 }
 
 .products__card:hover {
@@ -133,6 +135,8 @@
   height: 200px;
   background-color: #f3f4f6;
   overflow: hidden;
+  display: block;
+  text-decoration: none;
 }
 
 .products__cardImg {
@@ -153,6 +157,7 @@
 
 .products__cardContent {
   padding: 20px;
+  flex: 1;
 }
 
 .products__cardTitle {
@@ -161,6 +166,16 @@
   color: #1f2937;
   margin-bottom: 8px;
   line-height: 1.4;
+  text-decoration: none;
+  
+  &:hover {
+    color: #3b82f6;
+  }
+}
+
+.products__cardContent a {
+  text-decoration: none;
+  color: inherit;
 }
 
 .products__cardDescription {
