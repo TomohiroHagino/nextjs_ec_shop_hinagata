@@ -358,7 +358,10 @@ curl http://localhost:3000/api/products`}
                     </Link>
                     <div className={styles.home__productActions}>
                       <ProductCardActions
-                        product={product}
+                        productId={product.id}
+                        productName={product.name}
+                        stock={product.stock}
+                        isActive={product.isActive}
                       />
                     </div>
                   </article>
