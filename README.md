@@ -260,13 +260,110 @@ npm run db:seed
 ### 4. 開発サーバーの起動
 
 ```bash
+# 通常起動
 npm run dev
+
+# または、データベースロックをクリーンアップしてから起動
+npm run dev:clean
+```
+
+サーバーが起動したら、ブラウザで http://localhost:3000 にアクセスしてください。
+
+### 5. 開発サーバーの停止
+
+開発サーバーを停止するには、ターミナルで以下を実行します：
+
+```bash
+Ctrl + C  (MacはCommand + C ではなく Control + C)
+```
+
+**注意**: サーバーを停止した後、データベースロックが残る場合があります。その場合は以下を実行してください：
+
+```bash
+npm run db:cleanup
+```
+
+## サーバーの起動・停止
+
+### 開発サーバー
+
+**起動方法:**
+```bash
+# 通常起動
+npm run dev
+
+# クリーンアップしてから起動（推奨）
+npm run dev:clean
+```
+
+**停止方法:**
+```bash
+# ターミナルで以下のキーを押す
+Ctrl + C
+```
+
+**ポート**: http://localhost:3000
+
+### プロダクションサーバー
+
+**ビルド:**
+```bash
+npm run build
+```
+
+**起動:**
+```bash
+npm start
+```
+
+**停止:**
+```bash
+Ctrl + C
+```
+
+### トラブルシューティング
+
+#### データベースがロックされている場合
+
+開発サーバーを停止した後、以下のエラーが出る場合：
+
+```
+Error: attempt to write a readonly database
+Error: Operations timed out
+```
+
+**解決方法:**
+```bash
+# 残っているプロセスをクリーンアップ
+npm run db:cleanup
+
+# その後、サーバーを再起動
+npm run dev
+```
+
+#### ポートが既に使用されている場合
+
+```
+Error: EADDRINUSE: address already in use :::3000
+```
+
+**解決方法:**
+```bash
+# 使用中のプロセスを確認
+lsof -ti:3000
+
+# プロセスを終了
+kill -9 $(lsof -ti:3000)
+
+# または別のポートで起動
+PORT=3001 npm run dev
 ```
 
 ## 利用可能なスクリプト
 
 ### 開発・ビルド
 - `npm run dev` - 開発サーバーを起動
+- `npm run dev:clean` - データベースをクリーンアップしてから開発サーバーを起動
 - `npm run build` - プロダクションビルド
 - `npm run start` - プロダクションサーバーを起動
 - `npm run lint` - ESLintでコードをチェック
@@ -282,6 +379,9 @@ npm run dev
 - `npm run db:generate` - Prismaクライアントを生成
 - `npm run db:migrate` - データベースマイグレーション
 - `npm run db:seed` - シードデータを投入
+- `npm run db:reset` - データベースをリセット（全データ削除）
+- `npm run db:cleanup` - データベースロックをクリーンアップ
+- `npm run db:studio` - Prisma Studioを起動（データベースGUI）
 
 ### バッチ処理
 - `npm run batch:cancel-expired-orders` - 期限切れ注文の自動キャンセル

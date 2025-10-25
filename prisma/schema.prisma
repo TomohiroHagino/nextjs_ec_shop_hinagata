@@ -30,7 +30,7 @@ model Product {
   id          String   @id @default(uuid())
   name        String
   description String
-  price       Float
+  price       Int      // 価格を整数で保存（円単位、例：1999円 → 1999）
   stock       Int      @default(0)
   imageUrl    String?
   isActive    Boolean  @default(true)
@@ -77,7 +77,7 @@ model Order {
   id          String      @id @default(uuid())
   userId      String
   status      String @default("PENDING")
-  totalAmount Float
+  totalAmount Int         // 合計金額を整数で保存（円単位）
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
@@ -93,7 +93,7 @@ model OrderItem {
   orderId   String
   productId String
   quantity  Int
-  price     Float
+  price     Int      // 注文時の価格を整数で保存（円単位）
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
