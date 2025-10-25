@@ -10,11 +10,15 @@ jest.mock('bcryptjs', () => ({
 describe('User', () => {
   const userId = new UserId('user-123');
   const email = new Email('test@example.com');
-  const password = Password.fromPlainText('password123');
+  let password: Password;
   const firstName = 'John';
   const lastName = 'Doe';
   const createdAt = new CreatedAt();
   const updatedAt = new UpdatedAt();
+
+  beforeAll(async () => {
+    password = await Password.fromPlainText('password123');
+  });
 
   describe('create', () => {
     it('should create a new user', () => {
@@ -62,9 +66,9 @@ describe('User', () => {
   });
 
   describe('changePassword', () => {
-    it('should change password and update timestamp', () => {
+    it('should change password and update timestamp', async () => {
       const user = User.create(userId, email, password, firstName, lastName);
-      const newPassword = Password.fromPlainText('newpassword123');
+      const newPassword = await Password.fromPlainText('newpassword123');
 
       const updatedUser = user.changePassword(newPassword);
 

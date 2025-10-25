@@ -8,9 +8,43 @@ import { OrderRepository, OrderDomainService } from '@/domain/order-aggregate';
 import { CreateOrderCommand, OrderItemCommand } from '../shared/command';
 import { OrderDto, OrderItemDto } from '../shared/dto';
 import { v4 as uuidv4 } from 'uuid';
+import { prisma } from '@/infrastructure/database/prisma/client';
 
 /**
- * オーダー作成サービス
+ * 注文作成サービス（CreateOrderService）
+ * 
+ * 役割:
+ * - カートの内容から新しい注文を作成するアプリケーションサービス
+ * - ショッピングカートから注文への変換を管理
+ * 
+ * 処理フロー:
+ * 1. コマンドのバリデーション
+ * 2. 商品情報を取得して注文時の価格を確定
+ * 3. 注文アイテムを作成
+ * 4. **トランザクション開始**
+ * 5. ドメインサービスでビジネスルール検証
+ * 6. 注文を作成
+ * 7. データベースに保存（注文と注文アイテム）
+ * 8. カートをクリア
+ * 9. **トランザクション終了（コミットまたはロールバック）**
+ * 10. DTOに変換して返却
+ * 
+ * 使用場面:
+ * - POST /api/orders のリクエスト処理
+ * - カートページから注文確定
+ * - レジに進む操作
+ * 
+ * 依存関係:
+ * - OrderRepository: 注文の永続化
+ * - OrderDomainService: ビジネスルールの検証
+ * - ProductRepository: 商品情報の取得
+ * - CartRepository: カートのクリア
+ * 
+ * 重要な処理:
+ * - 注文時の価格を固定（後で商品価格が変わっても影響なし）
+ * - 在庫の確認と減算
+ * - 注文確定後はカートがクリアされる
+ * - **トランザクション管理でデータ整合性を保証**
  */
 export class CreateOrderService {
   constructor(
@@ -44,23 +78,58 @@ export class CreateOrderService {
       })
     );
 
-    // ドメインサービスで検証
-    await this.orderDomainService.validateOrderCreation(userId, orderItems);
+    // トランザクション内で実行
+    const order = await prisma.$transaction(async (tx) => {
+      // ドメインサービスで検証
+      await this.orderDomainService.validateOrderCreation(userId, orderItems);
 
-    // オーダーを作成
-    const order = Order.create(orderId, userId, orderItems);
+      // オーダーを作成
+      const order = Order.create(orderId, userId, orderItems);
 
-    // リポジトリに保存
-    await this.orderRepository.save(order);
-    for (const item of orderItems) {
-      await this.orderRepository.saveItem(item);
-    }
+      // 注文を保存（Prismaを直接使用）
+      await tx.order.create({
+        data: {
+          id: order.id.value,
+          userId: order.userId.value,
+          status: order.status.value,
+          totalAmount: order.totalAmount.value,
+          createdAt: order.createdAt.value,
+          updatedAt: order.updatedAt.value,
+        },
+      });
 
-    // 注文作成後、カートをクリア
-    const cart = await this.cartRepository.findByUserId(userId);
-    if (cart) {
-      await this.cartRepository.delete(cart.id);
-    }
+      // 注文アイテムを保存
+      for (const item of orderItems) {
+        await tx.orderItem.create({
+          data: {
+            id: item.id,
+            orderId: order.id.value,
+            productId: item.productId.value,
+            quantity: item.quantity.value,
+            price: item.price.value,
+            createdAt: item.createdAt.value,
+            updatedAt: item.updatedAt.value,
+          },
+        });
+      }
+
+      // 注文作成後、カートをクリア
+      await tx.cartItem.deleteMany({
+        where: {
+          cart: {
+            userId: userId.value,
+          },
+        },
+      });
+      
+      await tx.cart.deleteMany({
+        where: {
+          userId: userId.value,
+        },
+      });
+
+      return order;
+    });
 
     // DTOに変換して返却
     return this.toOrderDto(order);

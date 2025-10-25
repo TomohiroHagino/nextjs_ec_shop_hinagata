@@ -54,6 +54,7 @@ export class UpdateOrderStatusService {
       item.quantity.value,
       item.price.value,
       item.getSubtotal().value,
+      undefined, // product情報は後で取得する場合に使用
       item.createdAt.toString(),
       item.updatedAt.toString(),
     ));

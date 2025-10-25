@@ -6,7 +6,33 @@ import { GetCartQuery } from '../shared/query';
 import { CartDto, CartItemDto } from '../shared/dto';
 
 /**
- * カート取得サービス
+ * カート取得サービス（GetCartService）
+ * 
+ * 役割:
+ * - ユーザーのカート情報を取得するアプリケーションサービス
+ * - カートの内容と商品詳細情報を組み合わせて返却
+ * 
+ * 処理フロー:
+ * 1. クエリのバリデーション
+ * 2. カートの取得または作成（空のカート）
+ * 3. 商品情報を取得してDTOに含める
+ * 4. DTOに変換して返却
+ * 
+ * 使用場面:
+ * - GET /api/cart のリクエスト処理
+ * - カートページの表示
+ * - ヘッダーのカート数表示
+ * - 注文確定前のカート内容確認
+ * 
+ * 依存関係:
+ * - CartRepository: カートの永続化
+ * - CartDomainService: カートの取得・作成
+ * 
+ * 特徴:
+ * - カートが存在しない場合は空のカートを作成
+ * - 商品の詳細情報（名前、価格、画像）を含む
+ * - 商品情報はリポジトリのキャッシュから取得
+ * - 読み取り専用の操作
  */
 export class GetCartService {
   constructor(

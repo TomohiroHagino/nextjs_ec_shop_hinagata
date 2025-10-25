@@ -9,22 +9,22 @@ jest.mock('bcryptjs', () => ({
 
 describe('Password', () => {
   describe('fromPlainText', () => {
-    it('should create password from plain text', () => {
-      const password = Password.fromPlainText('password123');
+    it('should create password from plain text', async () => {
+      const password = await Password.fromPlainText('password123');
       expect(password.hashedValue).toContain('hashed_password123');
     });
 
-    it('should throw ValidationException for empty password', () => {
-      expect(() => Password.fromPlainText('')).toThrow(ValidationException);
+    it('should throw ValidationException for empty password', async () => {
+      await expect(Password.fromPlainText('')).rejects.toThrow(ValidationException);
     });
 
-    it('should throw ValidationException for password too short', () => {
-      expect(() => Password.fromPlainText('1234567')).toThrow(ValidationException);
+    it('should throw ValidationException for password too short', async () => {
+      await expect(Password.fromPlainText('1234567')).rejects.toThrow(ValidationException);
     });
 
-    it('should throw ValidationException for password too long', () => {
+    it('should throw ValidationException for password too long', async () => {
       const longPassword = 'a'.repeat(129);
-      expect(() => Password.fromPlainText(longPassword)).toThrow(ValidationException);
+      await expect(Password.fromPlainText(longPassword)).rejects.toThrow(ValidationException);
     });
   });
 
@@ -40,14 +40,14 @@ describe('Password', () => {
   });
 
   describe('compare', () => {
-    it('should return true for matching password', () => {
-      const password = Password.fromPlainText('password123');
-      expect(password.compare('password123')).toBe(true);
+    it('should return true for matching password', async () => {
+      const password = await Password.fromPlainText('password123');
+      expect(await password.compare('password123')).toBe(true);
     });
 
-    it('should return false for non-matching password', () => {
-      const password = Password.fromPlainText('password123');
-      expect(password.compare('wrongpassword')).toBe(false);
+    it('should return false for non-matching password', async () => {
+      const password = await Password.fromPlainText('password123');
+      expect(await password.compare('wrongpassword')).toBe(false);
     });
   });
 

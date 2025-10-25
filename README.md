@@ -265,18 +265,121 @@ npm run dev
 
 ## 利用可能なスクリプト
 
+### 開発・ビルド
 - `npm run dev` - 開発サーバーを起動
 - `npm run build` - プロダクションビルド
 - `npm run start` - プロダクションサーバーを起動
 - `npm run lint` - ESLintでコードをチェック
+
+### テスト
 - `npm run test` - 全テストを実行
 - `npm run test:unit` - ユニットテストを実行
 - `npm run test:integration` - 統合テストを実行
 - `npm run test:e2e` - E2Eテストを実行
 - `npm run test:coverage` - カバレッジレポートを生成
+
+### データベース
 - `npm run db:generate` - Prismaクライアントを生成
 - `npm run db:migrate` - データベースマイグレーション
 - `npm run db:seed` - シードデータを投入
+
+### バッチ処理
+- `npm run batch:cancel-expired-orders` - 期限切れ注文の自動キャンセル
+- `npm run batch:cancel-expired-orders:dry-run` - キャンセル対象の確認（更新なし）
+
+## バッチ処理
+
+### 期限切れ注文の自動キャンセル
+
+作成から1週間（7日間）経過したPENDING状態の注文を自動的にキャンセルするバッチです。
+
+#### 手動実行
+
+```bash
+# 実際にキャンセル処理を実行
+npm run batch:cancel-expired-orders
+
+# Dry Run（対象を確認するだけ、実際には更新しない）
+npm run batch:cancel-expired-orders:dry-run
+```
+
+#### Dry Runモード
+
+Dry Runモードでは、キャンセル対象の注文を表示するだけで、実際のデータベース更新は行いません。  
+本番環境で実行する前に、必ずDry Runで対象を確認することを推奨します。
+
+```bash
+# 直接実行する場合
+tsx src/batch/cancel-expired-orders.ts --dry-run
+```
+
+#### cron設定（本番環境推奨）
+
+毎日0時に自動実行する場合：
+
+```bash
+# crontab -e で編集
+0 0 * * * cd /path/to/ec_shop_fullst && npm run batch:cancel-expired-orders >> /var/log/cancel-expired-orders.log 2>&1
+```
+
+毎時00分に実行する場合：
+
+```bash
+0 * * * * cd /path/to/ec_shop_fullst && npm run batch:cancel-expired-orders >> /var/log/cancel-expired-orders.log 2>&1
+```
+
+#### 処理内容
+
+1. 現在時刻から7日前の日時を計算
+2. その日時より前に作成されたPENDING状態の注文を取得
+3. トランザクション内で一括してステータスをCANCELLEDに更新（Dry Runの場合はスキップ）
+4. 処理結果をログ出力
+
+#### ログ例
+
+**通常モード:**
+
+```
+🔄 期限切れ注文の自動キャンセルバッチを開始...
+📅 対象: 2025-10-18T00:00:00.000Z より前に作成されたPENDING注文
+📦 3件の期限切れ注文を発見
+
+📋 キャンセル対象の注文詳細:
+  1. 注文ID: order-abc123
+     ユーザーID: user-123
+     金額: ¥596,000
+     作成日時: 2025-10-10T10:30:00.000Z
+  2. 注文ID: order-def456
+     ユーザーID: user-456
+     金額: ¥149,800
+     作成日時: 2025-10-12T15:00:00.000Z
+
+✅ 3件の注文をキャンセルしました
+✨ バッチ処理が正常に完了しました
+```
+
+**Dry Runモード:**
+
+```
+🔄 [DRY RUN] 期限切れ注文の自動キャンセルバッチを開始...
+⚠️  DRY RUNモード: データベースは更新されません
+📅 対象: 2025-10-18T00:00:00.000Z より前に作成されたPENDING注文
+📦 3件の期限切れ注文を発見
+
+📋 キャンセル対象の注文詳細:
+  1. 注文ID: order-abc123
+     ユーザーID: user-123
+     金額: ¥596,000
+     作成日時: 2025-10-10T10:30:00.000Z
+  2. 注文ID: order-def456
+     ユーザーID: user-456
+     金額: ¥149,800
+     作成日時: 2025-10-12T15:00:00.000Z
+
+⚠️  DRY RUNモードのため、実際のキャンセル処理はスキップされました
+✨ バッチ処理が完了しました（変更なし）
+```
+
 
 ## API エンドポイント
 

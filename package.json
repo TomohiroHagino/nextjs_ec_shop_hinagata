@@ -25,6 +25,8 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset",
     "db:studio": "prisma studio",
+    "batch:cancel-expired-orders": "tsx src/batch/cancel-expired-orders.ts",
+    "batch:cancel-expired-orders:dry-run": "tsx src/batch/cancel-expired-orders.ts --dry-run",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky install"
