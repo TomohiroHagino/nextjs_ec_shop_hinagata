@@ -63,6 +63,7 @@ export class ClearCartService {
       item.id.value,
       item.productId.value,
       item.quantity.value,
+      undefined, // product情報は後で取得する場合に使用
       item.createdAt.toString(),
       item.updatedAt.toString(),
     ));
